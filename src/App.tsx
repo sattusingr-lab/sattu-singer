@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { TabType } from './types';
+import { TabType, ThemeMode } from './types';
 import { Navbar } from './components/Navbar';
 import { StorySection } from './components/StorySection';
 import { MSCCSection } from './components/MSCCSection';
@@ -11,6 +11,10 @@ import { Volume2, VolumeX, Sparkles, Flame, Heart, AlertCircle, RefreshCw, Twitt
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>('story');
+  const [theme, setTheme] = useState<ThemeMode>(() => {
+    const saved = localStorage.getItem('sattu_app_theme');
+    return (saved === 'light' || saved === 'dark') ? saved : 'dark';
+  });
   const [currentAudioUrl, setCurrentAudioUrl] = useState<string | null>(null);
   const [activePlayingTitle, setActivePlayingTitle] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -18,6 +22,23 @@ export default function App() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const toggleTheme = () => {
+    setTheme((prev) => {
+      const nextTheme: ThemeMode = prev === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('sattu_app_theme', nextTheme);
+      return nextTheme;
+    });
+  };
+
+  // Sync theme with body class
+  useEffect(() => {
+    if (theme === 'light') {
+      document.body.classList.add('light');
+    } else {
+      document.body.classList.remove('light');
+    }
+  }, [theme]);
 
   // Audio cleanup on unmount
   useEffect(() => {
@@ -103,11 +124,17 @@ export default function App() {
     setIsPlaying(false);
   };
 
+  const isDark = theme === 'dark';
+
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-[#F5F5F5] flex flex-col selection:bg-orange-500 selection:text-black relative overflow-x-hidden font-display">
+    <div className={`min-h-screen flex flex-col selection:bg-orange-500 selection:text-black relative overflow-x-hidden font-display transition-colors duration-300 ${
+      isDark ? 'bg-[#0A0A0A] text-[#F5F5F5]' : 'bg-[#F8FAFC] text-[#0F172A] light-mode'
+    }`}>
       
       {/* Huge Background Typography Watermark */}
-      <div className="absolute top-[-20px] left-[-20px] text-[160px] sm:text-[280px] font-black opacity-[0.025] select-none leading-none tracking-tighter pointer-events-none uppercase text-white">
+      <div className={`absolute top-[-20px] left-[-20px] text-[160px] sm:text-[280px] font-black select-none leading-none tracking-tighter pointer-events-none uppercase ${
+        isDark ? 'text-white opacity-[0.025]' : 'text-gray-900 opacity-[0.03]'
+      }`}>
         CREATOR
       </div>
 
@@ -119,13 +146,15 @@ export default function App() {
         onEnded={() => setIsPlaying(false)}
       />
 
-      {/* Top Navigation */}
+      {/* Top Navigation with Theme Toggle */}
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         isPlayingGlobal={isPlaying}
         onStopGlobalAudio={handleStopAudio}
         currentPlayingTitle={activePlayingTitle}
+        theme={theme}
+        toggleTheme={toggleTheme}
       />
 
       {/* Synthesizing Toast / Indicator */}

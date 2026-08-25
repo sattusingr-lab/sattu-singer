@@ -1,5 +1,7 @@
 export type TabType = 'story' | 'mscc' | 'ccx' | 'music' | 'tts-studio';
 
+export type ThemeMode = 'dark' | 'light';
+
 export interface TTSVoice {
   id: string;
   name: string;
