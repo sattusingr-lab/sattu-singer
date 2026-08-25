@@ -1,0 +1,8 @@
+{
+  "name": "Sattu Singer - Creator, Trader & CCX Hub",
+  "description": "Interactive personal portfolio and concept ecosystem of Sattu (Sattu Singer) featuring MSCC (Mirror Smart Code Crackr), CCX (Chart Cracker X) simulator, creative music lab, and Gemini 3.1 Flash TTS text-to-speech engine.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
